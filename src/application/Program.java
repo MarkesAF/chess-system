@@ -2,9 +2,13 @@ package application;
 
 import chess.*;
 
+import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Locale;
 import java.util.Scanner;
+import java.util.List;
+
+
 
 import chess.ChessMatch;
 
@@ -12,11 +16,13 @@ public class Program {
     public static void main(String[]args){
         Scanner in = new Scanner(System.in);
         ChessMatch chessMatch = new ChessMatch();
+        List<ChessPiece> captured = new ArrayList<>();
+
 
         while(true) {
             try {
                 UI.clearScreen();
-                UI.printMatch(chessMatch);
+                UI.printMatch(chessMatch,captured);
                 System.out.println();
                 System.out.print("Source: ");
                 ChessPosition source = UI.readChessPosition(in);
@@ -30,6 +36,9 @@ public class Program {
                 ChessPosition target = UI.readChessPosition(in);
 
                 ChessPiece capturedPiece = chessMatch.performChessMove(source, target);
+                if(capturedPiece != null){
+                    captured.add(capturedPiece);
+                }
             }
             catch(ChessException e){
                 System.out.println(e.getMessage());
