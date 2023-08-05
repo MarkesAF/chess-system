@@ -3,7 +3,7 @@ package chess.pieces;
 import chess.ChessPiece;
 import boardgame.Board;
 import chess.Color;
-import boardgame.Position
+import boardgame.Position;
 
 public class King extends ChessPiece{
     public King(Board board, Color color){
