@@ -11,6 +11,7 @@ import chess.pieces.Bishop;
 import chess.pieces.Knight;
 import chess.pieces.Queen;
 
+import java.security.InvalidParameterException;
 import java.util.stream.Collectors;
 import java.util.List;
 import java.util.ArrayList;
@@ -22,6 +23,7 @@ public class ChessMatch {
     private Color currentPlayer;
     private Board board;
     private ChessPiece enPassantVulnerable;
+    private ChessPiece promoted;
 
 
 
@@ -47,6 +49,9 @@ public class ChessMatch {
     public ChessPiece getEnPassantVulnerable(){
         return enPassantVulnerable;
     }
+    public ChessPiece getPromoted(){
+        return promoted;
+    }
 
 
     public ChessMatch(){
@@ -70,7 +75,7 @@ public class ChessMatch {
     }
     public boolean[][]possibleMoves(ChessPosition sourcePosition){
         Position position = sourcePosition.toPosition();
-        validadeSourcePosition(position);
+        validateSourcePosition(position);
         return board.piece(position).possibleMoves();
     }
     public ChessPiece performChessMove(ChessPosition sourcePosition, ChessPosition targetPosition){
@@ -86,6 +91,14 @@ public class ChessMatch {
         }
         ChessPiece movedPiece = (ChessPiece)board.piece(target);
 
+        //SpecialMove promotion
+        promoted = null;
+        if(movedPiece instanceof Pawn ){
+            if(movedPiece.getColor() == Color.WHITE && target.getRow() == 0 || (movedPiece.getColor() == Color.BLACK && target.getRow() == 7)){
+                promoted = (ChessPiece)board.piece(target);
+                promoted = replacePromotedPiece("Q");
+            }
+        }
         check = (testCheck(opponent(currentPlayer))) ? true : false;
 
         if(testCheckMate(opponent(currentPlayer))){
@@ -100,9 +113,33 @@ public class ChessMatch {
         }else{
             enPassantVulnerable = null;
         }
-
-
         return (ChessPiece) capturedPiece;
+    }
+
+    public ChessPiece replacePromotedPiece(String type){
+        if(promoted == null){
+            throw new IllegalStateException("There is no piece to be promoted");
+        }
+        if(!type.equals("B") && !type.equals("N") && !type.equals("R") && !type.equals("Q")){
+            throw new InvalidParameterException("Invalide Type for promoted");
+        }
+
+        Position pos = promoted.getChessPosition().toPosition();
+        Piece p = board.removePiece(pos);
+        pieceOnTheBoard.remove(p);
+
+        ChessPiece newPiece = newPiece(type, promoted.getColor());
+        board.placePiece(newPiece,pos);
+        pieceOnTheBoard.add(newPiece);
+
+        return newPiece;
+    }
+
+    private ChessPiece newPiece(String type, Color color){
+        if(type.equals("B")return new Bishop(board,color));
+        if(type.equals("N")return new Knight(board,color));
+        if(type.equals("Q")return new Queen(board,color));
+        return new Rook(board,color));
     }
     private void validateSourcePosition(Position position){
         if(!board.thereIsAPiece(position)){
