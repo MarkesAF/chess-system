@@ -1,7 +1,6 @@
 package chess;
 
 import boardgame.Board;
-import chess.Color;
 import chess.pieces.Pawn;
 import chess.pieces.Rook;
 import chess.pieces.King;
@@ -11,7 +10,7 @@ import chess.pieces.Bishop;
 import chess.pieces.Knight;
 import chess.pieces.Queen;
 
-import java.security.InvalidParameterException;
+
 import java.util.stream.Collectors;
 import java.util.List;
 import java.util.ArrayList;
@@ -121,7 +120,7 @@ public class ChessMatch {
             throw new IllegalStateException("There is no piece to be promoted");
         }
         if(!type.equals("B") && !type.equals("N") && !type.equals("R") && !type.equals("Q")){
-            throw new InvalidParameterException("Invalide Type for promoted");
+            return promoted;
         }
 
         Position pos = promoted.getChessPosition().toPosition();
@@ -136,10 +135,10 @@ public class ChessMatch {
     }
 
     private ChessPiece newPiece(String type, Color color){
-        if(type.equals("B")return new Bishop(board,color));
-        if(type.equals("N")return new Knight(board,color));
-        if(type.equals("Q")return new Queen(board,color));
-        return new Rook(board,color));
+        if(type.equals("B"))return new Bishop(board,color);
+        if(type.equals("N"))return new Knight(board,color);
+        if(type.equals("Q"))return new Queen(board,color);
+        return new Rook(board,color);
     }
     private void validateSourcePosition(Position position){
         if(!board.thereIsAPiece(position)){
